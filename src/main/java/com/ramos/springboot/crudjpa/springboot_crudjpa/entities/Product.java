@@ -1,5 +1,7 @@
 package com.ramos.springboot.crudjpa.springboot_crudjpa.entities;
 
+import com.ramos.springboot.crudjpa.springboot_crudjpa.validation.IsExistsDb;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,16 +19,20 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idproducts;
+
+    @IsExistsDb
+    @NotBlank
+    private String sku;
     
-    @NotEmpty
+    @NotEmpty(message = "{NotEmpty.product.name}")
     @Size(min = 3, max = 20)
     private String name;
 
     @Min(500)
-    @NotNull
+    @NotNull(message = "{NotNull.product.price}")
     private Integer price;
 
-    @NotBlank
+    @NotBlank(message = "{NotBlank.product.description}")
     private String description;
 
 
@@ -56,5 +62,11 @@ public class Product {
     }
     public void setDescription(String description){
         this.description = description;
+    }
+    public String getSku() {
+        return sku;
+    }
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 }

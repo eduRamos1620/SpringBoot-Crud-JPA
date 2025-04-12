@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.ramos.springboot.crudjpa.springboot_crudjpa.security.filter.JwtAuthenticationFilter;
+import com.ramos.springboot.crudjpa.springboot_crudjpa.security.filter.JwtValidationFilter;
 
 @Configuration
 public class SpringSecurityConfig {
@@ -35,8 +36,14 @@ public class SpringSecurityConfig {
         return http.authorizeHttpRequests((authz) -> authz
         .requestMatchers(HttpMethod.GET, "/api/users").permitAll()
         .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
+        .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/{id}").hasAnyRole("ADMIN", "USER")
+        .requestMatchers(HttpMethod.POST, "/api/products").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.PUT, "/api/products/{id}").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.DELETE, "/api/products/{id}").hasRole("ADMIN")
         .anyRequest().authenticated())
         .addFilter(new JwtAuthenticationFilter(authenticationManager()))
+        .addFilter(new JwtValidationFilter(authenticationManager()))
         .csrf(config -> config.disable())
         .sessionManagement(managment -> 
         managment.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
